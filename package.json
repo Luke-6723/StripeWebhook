@@ -1,0 +1,25 @@
+{
+  "name": "stripewebhook",
+  "version": "0.0.1",
+  "description": "A Stripe Webhook in express based on Theo @ t3.gg's implementation doc",
+  "keywords": [
+    "stripe",
+    "webhook",
+    "payments",
+    "handling",
+    "external"
+  ],
+  "license": "MIT",
+  "author": "Luke Stoodley <luke@ichigo.uk>",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
