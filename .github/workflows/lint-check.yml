@@ -1,0 +1,19 @@
+name: Code Standards
+on:
+  push:
+  pull_request:
+    
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: latest
+      - name: Install Dependencies
+        run: |
+          npm install --include=dev .
+      - name: Check code standards
+        run: |
+          npm run lint
