@@ -1,3 +1,3 @@
 /**
- * /api/subscription
+ * /api/subscription/:id
  */
