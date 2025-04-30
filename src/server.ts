@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import checkoutRouter from "./routes/checkout";
 import stripeWebhookRouter from "./routes/stripe";
+import stripeCustomerRouter from "./routes/subscription";
 
 export const app = express();
 const PORT = 3000;
@@ -35,6 +36,7 @@ app.get("/", (req, res) => {
 
 app.use(stripeWebhookRouter);
 app.use(checkoutRouter);
+app.use(stripeCustomerRouter);
 
 // Start the server
 app.listen(process.env.PORT, () => {
