@@ -14,13 +14,13 @@
   "type": "module",
   "main": "src/server.js",
   "scripts": {
-    "start": "",
-    "build": "",
+    "start": "npx tsx src/server.ts",
     "dev": "npx tsx watch src/server.ts",
     "test": "npx vitest",
     "lint": "npx eslint"
   },
   "dependencies": {
+    "async-wait-until": "^2.0.27",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "ioredis": "^5.6.1",

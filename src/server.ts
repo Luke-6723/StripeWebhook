@@ -1,11 +1,20 @@
 import express, { NextFunction, Request, Response } from "express";
 import checkoutRouter from "./routes/checkout";
+import stripeWebhookRouter from "./routes/stripe";
 
 export const app = express();
 const PORT = 3000;
 
 // Middleware to parse JSON
-app.use(express.json());
+app.use((req, res, next) => {
+  // Simple fix to stop /api/stripe being affected by JSON parsing.
+  // Stripe NEEDS the raw body.
+  if (req.originalUrl === "/api/stripe") {
+    return express.raw({ type: "application/json" })(req, res, next);
+  }
+
+  return express.json()(req, res, next);
+});
 // Make the JSON responses pretty (not necessary by meh)
 app.set("json spaces", 2);
 
@@ -24,6 +33,7 @@ app.get("/", (req, res) => {
   });
 });
 
+app.use(stripeWebhookRouter);
 app.use(checkoutRouter);
 
 // Start the server

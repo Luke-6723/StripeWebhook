@@ -1,19 +1,11 @@
 import express, { Request } from "express";
 import Stripe from "stripe";
-import Redis from "ioredis";
+import { kv } from "@/utils/kv";
 
 interface CustomRequest extends Request {
   customer?: Stripe.Customer | Stripe.DeletedCustomer;
   stripeLineItems?: Stripe.Checkout.SessionCreateParams.LineItem[];
 }
-
-const kv = new Redis({
-  host: process.env.KEYDB_HOST,
-  port: Number(process.env.KEYDB_PORT) || 6379,
-  db: 0
-});
-
-kv.on("connect", () => console.log("[KV] Connected"));
 
 /**
  * /api/checkout
@@ -27,7 +19,8 @@ router.use(async (req: CustomRequest, res, next) => {
  * this should ensure no matter what that
  * a checkout url is created reliably
  */
-checkoutRouter.use(async (req: CustomRequest, res, next) => {
+
+checkoutRouter.post("/api/checkout", async (req: CustomRequest, res) => {
   const { email, lineItems, userId } = req.body;
 
   if (!email) {
@@ -38,7 +31,7 @@ checkoutRouter.use(async (req: CustomRequest, res, next) => {
   if (!userId) {
     res.status(400).json({ error: "userId is required" });
     return;
-  } 
+  }
 
   if (!Array.isArray(lineItems) || lineItems.length < 1) {
     res.status(400).json({ error: "Please provide lineItems for the checkout" });
@@ -86,10 +79,6 @@ checkoutRouter.use(async (req: CustomRequest, res, next) => {
     return;
   }
 
-  next();
-});
-
-checkoutRouter.post("/api/checkout", async (req: CustomRequest, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
