@@ -1,7 +1,7 @@
 /**
  * /api/stripe
  */
-import express, { Request } from "express";
+import express from "express";
 import { processEvent } from "@/utils/processEvent";
 import { stripe } from "@/utils/stripe";
 
