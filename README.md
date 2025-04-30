@@ -7,3 +7,23 @@ It's a very redamentary implementation based on what I use for my 2 primary proj
 ## See something you don't like or something that needs refactoring?
 
 Please submit contributions, I don't have the time or the experience to make everything **perfect** but I'd love to learn so if you contribute please make sure you give explanations of what I've done that needed improving so that I can actually gain more than just a `"this is bad, do it this way instead"` vibe.
+
+## How to use
+
+### Docker CLI
+
+```cli
+
+```
+
+### Docker Compose
+
+```cli
+
+```
+
+### Run locally
+
+```cli
+
+```
