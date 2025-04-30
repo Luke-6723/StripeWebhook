@@ -7,8 +7,8 @@ describe("POST /api/checkout", () => {
     const response = await request(app)
       .post("/api/checkout")
       .send({
-        "email": "luke@ichigo.uk",
-        "userId": "this_is_a_test",
+        "email": "automated_testing@ichigo.uk",
+        "userId": "automated_testing",
         "lineItems": [
           {
             "id": "prod_SDkfwwn0CqiYj9"
