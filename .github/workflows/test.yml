@@ -3,10 +3,27 @@ on:
   push:
     
 jobs:
-  testrun:
+  eslint:
     concurrency:
-      group: test-run-master
+      group: master-workflow
       cancel-in-progress: true
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: latest
+      - name: Install Dependencies
+        run: |
+          npm install --include=dev .
+      - name: Check code standards
+        run: |
+          npm run lint
+
+  testrun:
+    needs: eslint
+    if: ${{ success() }}
 
     runs-on: ubuntu-latest
     steps:
@@ -25,3 +42,29 @@ jobs:
       - name: Check code standards
         run: |
           npm run test
+
+  push-to-registry:
+    needs: testrun
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      # Log in to the GitHub Container Registry (GHCR)
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      # Build the Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/stripewebhook:latest .
+
+          # Push the Docker image to GitHub Container Registry
+      - name: Push Docker image to GHCR
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/stripewebhook:latest
