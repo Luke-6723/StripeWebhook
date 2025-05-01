@@ -44,6 +44,8 @@ jobs:
           echo "KEYDB_HOST=127.0.0.1" >> .env
           echo "KEYDB_PORT=6379" >> .env
           echo "STRIPE_SECRET=${{secrets.STRIPE_TEST_SECRET}}" >> .env
+          echo "STRIPE_SUCCESS_URL=http://localhost:3000/success" >> .env
+          echo "DEFAULT_STRIPE_CANCEL_URL=http://localhost:3000/cancel" >> .env
           npm run test
 
   push-to-registry:
