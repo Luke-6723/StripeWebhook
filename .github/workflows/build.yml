@@ -1,7 +1,7 @@
-name: Test and Deploy
+name: Deploy to GHCR.IO
 on:
   workflow_run:
-    workflows: [Code Standards]
+    workflows: [Code Standards, Tests]
     branches: [master]
     types: 
       - completed
