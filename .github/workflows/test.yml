@@ -41,6 +41,9 @@ jobs:
           npm install --include=dev .
       - name: Check code standards
         run: |
+          echo "KEYDB_HOST=127.0.0.1" >> .env
+          echo "KEYDB_PORT=6379" >> .env
+          echo "STRIPE_SECRET=${{secrets.STRIPE_TEST_SECRET}}" >> .env
           npm run test
 
   push-to-registry:
