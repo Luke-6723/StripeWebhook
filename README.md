@@ -10,4 +10,8 @@ Please submit contributions, I don't have the time or the experience to make eve
 
 ## How to use
 
+```cli
+stripe listen --api-key "sk_test_****" --forward-to "https://your-url-here.com/api/stripe"
+```
+
 [Read the wiki](https://github.com/Luke-6723/StripeWebhook/wiki/How-to-use)
