@@ -1,7 +1,6 @@
 name: Code Standards
 on:
   push:
-  pull_request:
     
 jobs:
   eslint:
