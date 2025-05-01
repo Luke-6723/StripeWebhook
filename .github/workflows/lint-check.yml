@@ -5,6 +5,10 @@ on:
     
 jobs:
   eslint:
+    concurrency:
+      group: lint-run-master
+      cancel-in-progress: true
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
