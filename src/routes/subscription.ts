@@ -2,8 +2,6 @@
  * /api/customer
  */
 import express from "express";
-import { processEvent } from "@/utils/processEvent";
-import { stripe } from "@/utils/stripe";
 import { kv } from "@/utils/kv";
 
 const stripeCustomerRouter = express.Router();
