@@ -45,7 +45,7 @@ checkoutRouter.post("/api/checkout", async (req: CustomRequest, res) => {
   }
 
   if (!req.customer || req.customer.deleted) {
-    req.customer = await stripe.customers.create({ email, metadata: { userId } });
+    req.customer = await stripe.customers.create({ email, metadata: { userId } }, { idempotencyKey: userId });
     await kv.set(`stripe:customer:${userId}`, req.customer.id);
   }
 
