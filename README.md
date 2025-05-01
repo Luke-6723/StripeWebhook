@@ -13,17 +13,28 @@ Please submit contributions, I don't have the time or the experience to make eve
 ### Docker CLI
 
 ```cli
-
+docker run -p 3000:3000 ghcr.io/Luke-6734/StripeWebhook:latest
 ```
 
 ### Docker Compose
 
-```cli
-
+```yml
+services:
+  stripehook:
+    image: Luke-6734/StripeWebhook:latest
+    restart: unless-stopped
+    ports:
+      - 3000:3000
 ```
 
 ### Run locally
 
 ```cli
+git clone https://github.com/Luke-6723/StripeWebhook
 
+cd StripeWebhook
+
+npm install
+
+npm run dev
 ```
