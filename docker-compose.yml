@@ -1,0 +1,15 @@
+services:
+  stripe-cli:
+    image: stripe/stripe-cli
+    container_name: stripe-cli
+    command: "listen --api-key ${STRIPE_SECRET} --forward-to stripe-webhook:3000/api/stripe"
+    env_file:
+      - .env
+  stripe-webhook:
+    image: ghcr.io/luke-6723/stripewebhook:latest
+    ports:
+      - 3110:3000
+    env_file:
+      - .env
+  
+
