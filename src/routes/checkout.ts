@@ -52,7 +52,7 @@ checkoutRouter.post("/api/checkout", async (req: CustomRequest, res) => {
   const customerId = await kv.get(`stripe:customer:${userId}`);
 
   if (customerId) {
-    req.customer = await stripe.customers.retrieve(customerId);
+    req.customer = await stripe.customers.retrieve(customerId).catch(() => undefined);
   }
 
   if (!req.customer || req.customer.deleted) {
