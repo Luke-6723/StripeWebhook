@@ -21,7 +21,18 @@ router.use(async (req: CustomRequest, res, next) => {
  */
 
 checkoutRouter.post("/api/checkout", async (req: CustomRequest, res) => {
-  const { email, lineItems, userId } = req.body;
+  const { 
+    email, 
+    lineItems, 
+    userId,
+    cancelRedirect,
+    successRedirect
+  } = req.body;
+
+  if (!successRedirect || !cancelRedirect) {
+    res.status(400).json({ error: "successRedirect and cancelRedirect is required" });
+    return;
+  } 
 
   if (!email) {
     res.status(400).json({ error: "Email is required" });
@@ -85,8 +96,8 @@ checkoutRouter.post("/api/checkout", async (req: CustomRequest, res) => {
       mode: "subscription",
       customer: req.customer?.id,
       line_items: req.stripeLineItems,
-      success_url: `${process.env.STRIPE_SUCCESS_URL}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: process.env.STRIPE_CANCEL_URL,
+      success_url: `${successRedirect}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: cancelRedirect,
     });
 
     res.json({ url: session.url });

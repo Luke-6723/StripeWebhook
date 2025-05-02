@@ -7,6 +7,8 @@ describe("POST /api/checkout", () => {
     const response = await request(app)
       .post("/api/checkout")
       .send({
+        "successRedirect": "http://localhost:3000/success",
+        "cancelRedirect": "http://localhost:3000/cancel",
         "email": "automated_testing@ichigo.uk",
         "userId": "automated_testing",
         "lineItems": [
