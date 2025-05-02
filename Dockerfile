@@ -11,6 +11,8 @@ COPY package-lock.json .
 COPY tsconfig.json .
 COPY src src/
 
+RUN npm install
+
 ## Run
 
 CMD ["npm", "start", "start"]
