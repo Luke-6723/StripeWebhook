@@ -52,11 +52,15 @@ checkoutRouter.post("/api/checkout", async (req: CustomRequest, res) => {
   const customerId = await kv.get(`stripe:customer:${userId}`);
 
   if (customerId) {
-    req.customer = await stripe.customers.retrieve(customerId).catch(() => undefined);
+    try {
+      req.customer = await stripe.customers.retrieve(customerId).catch();
+    } catch {
+      req.customer = undefined;
+    }
   }
 
   if (!req.customer || req.customer.deleted) {
-    req.customer = await stripe.customers.create({ email, metadata: { userId } }, { idempotencyKey: userId });
+    req.customer = await stripe.customers.create({ email, metadata: { userId } }, { idempotencyKey: `${userId}-${Date.now()}` });
     await kv.set(`stripe:customer:${userId}`, req.customer.id);
   }
 
