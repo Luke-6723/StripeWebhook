@@ -4,7 +4,7 @@ import { app } from "../server.js";
 import { kv } from "@/utils/kv.js";
 
 describe("GET /api/customer/automated_testing", () => {
-  it("index route should return hello world", async () => {
+  it("customer should be generated on post", async () => {
   
     await kv.set("stripe:customer:user_id_here", "cus_automated_testing");
 
