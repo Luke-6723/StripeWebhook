@@ -100,11 +100,11 @@ checkoutRouter.post("/api/checkout", async (req: CustomRequest, res) => {
       mode: "subscription",
       customer: req.customer?.id,
       line_items: req.stripeLineItems,
-      success_url: `${successRedirect}?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${successRedirect}`,
       cancel_url: cancelRedirect,
     });
 
-    res.json({ url: session.url });
+    res.json({ id: session.id, url: session.url });
     return;
   } catch (error) {
     console.error(error);
