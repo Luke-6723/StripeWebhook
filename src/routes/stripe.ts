@@ -26,7 +26,7 @@ stripeWebhookRouter.post("/api/stripe", async (req, res) => {
       process.env.STRIPE_WEBHOOK_SECRET!
     );
 
-    console.log(event);
+    console.log("Processed event:", event.type);
 
     await processEvent(event);
   }
