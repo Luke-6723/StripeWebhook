@@ -7,6 +7,47 @@ import { stripe } from "@/utils/stripe";
 
 const stripeCustomerRouter = express.Router();
 
+stripeCustomerRouter.post("/api/customer/:customerId/updatePaymentDetails", async (req, res) => {
+  const customerId = req.params.customerId;
+  let stripeCustomerId;
+  let subData;
+
+  if (customerId) {
+    subData = await kv.get(`stripe:customer:${customerId}`);
+
+    if (subData?.startsWith("cus_")) {
+      stripeCustomerId = subData;
+      subData = await kv.get(`stripe:customer:${stripeCustomerId}`);
+
+      try {
+        subData = JSON.parse(subData || "");
+      } catch {
+        subData = null;
+      }
+    }
+  }
+
+  if (subData) {
+
+    if (!req.body?.return_url) {
+      res.status(400).json({ error: "return_url not provided" });
+      return;
+    }
+
+    const session = await stripe.billingPortal.sessions.create({
+      customer: stripeCustomerId || customerId,
+      return_url: req.body?.return_url
+    });
+
+
+    res.status(200).json({ url: session.url });
+    return;
+  }
+
+  res.status(404).json({ error: "Not Found" });
+  return;
+});
+
 stripeCustomerRouter.get("/api/customer/:customerId/resume", async (req, res) => {
   const customerId = req.params.customerId;
   let stripeCustomerId;
