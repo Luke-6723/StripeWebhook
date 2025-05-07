@@ -7,8 +7,6 @@ import authenticationMiddleware from "./middleware/authenticationMiddleware";
 import errorHandlerMiddleware from "./middleware/errorHandlerMiddleware";
 
 export const app = express();
-const PORT = 3000;
-
 // Middleware to parse JSON
 app.use(bodyParserMiddleware);
 
@@ -26,5 +24,5 @@ app.use(stripeCustomerRouter);
 
 // Start the server
 app.listen(process.env.PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${process.env.PORT}`);
 });
