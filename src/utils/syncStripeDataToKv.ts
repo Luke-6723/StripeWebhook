@@ -24,6 +24,7 @@ export async function syncStripeDataToKV(customerId: string) {
   const subData = {
     subscriptionId: subscription.id,
     status: subscription.status,
+    prodId: subscription.items.data[0].price.product,
     priceId: subscription.items.data[0].price.id,
     currentPeriodEnd: subscription?.items.data[0].current_period_end,
     currentPeriodStart: subscription?.items.data[0].current_period_start,
