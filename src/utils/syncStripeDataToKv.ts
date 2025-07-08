@@ -35,6 +35,8 @@ export async function syncStripeDataToKV(customerId: string) {
         ? {
           brand: subscription.default_payment_method.card?.brand ?? null,
           last4: subscription.default_payment_method.card?.last4 ?? null,
+          expMonth: subscription.default_payment_method.card?.exp_month ?? null,
+          expYear: subscription.default_payment_method.card?.exp_year ?? null,
         }
         : null,
   };
