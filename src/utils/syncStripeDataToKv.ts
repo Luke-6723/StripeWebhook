@@ -21,7 +21,29 @@ export async function syncStripeDataToKV(customerId: string) {
   const subscription = subscriptions.data[0];
 
   let paymentMethodData = null;
-  if (typeof subscription.default_payment_method === "string") {
+  if (!subscription.default_payment_method) {
+    // If no payment method check the customer's default payment method
+    const customer = await stripe.customers.retrieve(customerId, {
+      expand: ["invoice_settings.default_payment_method"],
+    });
+    if (!customer.deleted && typeof customer.invoice_settings.default_payment_method === "string") {
+      const pm = await stripe.paymentMethods.retrieve(customer.invoice_settings.default_payment_method);
+      paymentMethodData = {
+        brand: pm.card?.brand ?? null,
+        last4: pm.card?.last4 ?? null,
+        expMonth: pm.card?.exp_month ?? null,
+        expYear: pm.card?.exp_year ?? null,
+      };
+    }
+    else if (!customer.deleted && typeof customer.invoice_settings?.default_payment_method === "object") {
+      paymentMethodData = {
+        brand: customer.invoice_settings?.default_payment_method?.card?.brand ?? null,
+        last4: customer.invoice_settings?.default_payment_method?.card?.last4 ?? null,
+        expMonth: customer.invoice_settings?.default_payment_method?.card?.exp_month ?? null,
+        expYear: customer.invoice_settings?.default_payment_method?.card?.exp_year ?? null,
+      };
+    }
+  } if (typeof subscription.default_payment_method === "string") {
     const pm = await stripe.paymentMethods.retrieve(subscription.default_payment_method);
     paymentMethodData = {
       brand: pm.card?.brand ?? null,

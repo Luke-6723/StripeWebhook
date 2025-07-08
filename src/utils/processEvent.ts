@@ -20,6 +20,7 @@ const allowedEvents: Stripe.Event.Type[] = [
   "payment_intent.succeeded",
   "payment_intent.payment_failed",
   "payment_intent.canceled",
+  "customer.updated",
 ];
 
 export async function processEvent(event: Stripe.Event) {
@@ -27,9 +28,13 @@ export async function processEvent(event: Stripe.Event) {
   if (!allowedEvents.includes(event.type)) return;
 
   // All the events I track have a customerId
-  const { customer: customerId } = event?.data?.object as {
+  let { customer: customerId } = event?.data?.object as {
     customer: string; // Sadly TypeScript does not know this
   };
+
+  if (event.type === "customer.updated") {
+    customerId = (event.data.object as Stripe.Customer).id;
+  }
 
   // This helps make it typesafe and also lets me know if my assumption is wrong
   if (typeof customerId !== "string") {
