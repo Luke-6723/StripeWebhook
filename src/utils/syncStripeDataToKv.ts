@@ -20,6 +20,24 @@ export async function syncStripeDataToKV(customerId: string) {
   // If a user can have multiple subscriptions, that's your problem
   const subscription = subscriptions.data[0];
 
+  let paymentMethodData = null;
+  if (typeof subscription.default_payment_method === "string") {
+    const pm = await stripe.paymentMethods.retrieve(subscription.default_payment_method);
+    paymentMethodData = {
+      brand: pm.card?.brand ?? null,
+      last4: pm.card?.last4 ?? null,
+      expMonth: pm.card?.exp_month ?? null,
+      expYear: pm.card?.exp_year ?? null,
+    };
+  } else if (subscription.default_payment_method) {
+    paymentMethodData = {
+      brand: subscription.default_payment_method.card?.brand ?? null,
+      last4: subscription.default_payment_method.card?.last4 ?? null,
+      expMonth: subscription.default_payment_method.card?.exp_month ?? null,
+      expYear: subscription.default_payment_method.card?.exp_year ?? null,
+    };
+  }
+
   // Store complete subscription state
   const subData = {
     subscriptionId: subscription.id,
@@ -29,16 +47,7 @@ export async function syncStripeDataToKV(customerId: string) {
     currentPeriodEnd: subscription?.items.data[0].current_period_end,
     currentPeriodStart: subscription?.items.data[0].current_period_start,
     cancelAtPeriodEnd: subscription.cancel_at_period_end,
-    paymentMethod:
-      subscription.default_payment_method &&
-        typeof subscription.default_payment_method !== "string"
-        ? {
-          brand: subscription.default_payment_method.card?.brand ?? null,
-          last4: subscription.default_payment_method.card?.last4 ?? null,
-          expMonth: subscription.default_payment_method.card?.exp_month ?? null,
-          expYear: subscription.default_payment_method.card?.exp_year ?? null,
-        }
-        : null,
+    paymentMethod: paymentMethodData
   };
 
   // Store the data in your KV
