@@ -29,6 +29,7 @@ export async function syncStripeDataToKV(customerId: string) {
     if (!customer.deleted && typeof customer.invoice_settings.default_payment_method === "string") {
       const pm = await stripe.paymentMethods.retrieve(customer.invoice_settings.default_payment_method);
       paymentMethodData = {
+        paypal: pm.paypal?.payer_email ?? null,
         brand: pm.card?.brand ?? null,
         last4: pm.card?.last4 ?? null,
         expMonth: pm.card?.exp_month ?? null,
@@ -37,6 +38,7 @@ export async function syncStripeDataToKV(customerId: string) {
     }
     else if (!customer.deleted && typeof customer.invoice_settings?.default_payment_method === "object") {
       paymentMethodData = {
+        paypal: customer.invoice_settings?.default_payment_method?.paypal?.payer_email ?? null,
         brand: customer.invoice_settings?.default_payment_method?.card?.brand ?? null,
         last4: customer.invoice_settings?.default_payment_method?.card?.last4 ?? null,
         expMonth: customer.invoice_settings?.default_payment_method?.card?.exp_month ?? null,
@@ -46,6 +48,7 @@ export async function syncStripeDataToKV(customerId: string) {
   } if (typeof subscription.default_payment_method === "string") {
     const pm = await stripe.paymentMethods.retrieve(subscription.default_payment_method);
     paymentMethodData = {
+      paypal: customer.invoice_settings?.default_payment_method?.paypal?.payer_email ?? null,
       brand: pm.card?.brand ?? null,
       last4: pm.card?.last4 ?? null,
       expMonth: pm.card?.exp_month ?? null,
@@ -53,6 +56,7 @@ export async function syncStripeDataToKV(customerId: string) {
     };
   } else if (subscription.default_payment_method) {
     paymentMethodData = {
+      paypal: customer.invoice_settings?.default_payment_method?.paypal?.payer_email ?? null,
       brand: subscription.default_payment_method.card?.brand ?? null,
       last4: subscription.default_payment_method.card?.last4 ?? null,
       expMonth: subscription.default_payment_method.card?.exp_month ?? null,
