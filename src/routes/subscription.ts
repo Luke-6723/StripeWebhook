@@ -73,6 +73,27 @@ stripeCustomerRouter.get("/api/customer/:customerId/resume", async (req, res) =>
       cancel_at_period_end: false
     });
 
+    /**
+     * We can check to make sure that the subscription key data
+     * has cancelAtPeriodEnd set to false in the kv store to ensure
+     * it was resumed successfully. otherwise we will wait 2 seconds.
+     * This is a workaround for the fact that stripe
+     * does not return the updated subscription data immediately.
+     */
+    let attempts = 0;
+    while (true) {
+      const updatedSubData = await kv.get(`stripe:customer:${stripeCustomerId}`);
+      if (updatedSubData) {
+        const parsedData = JSON.parse(updatedSubData);
+        
+        if (parsedData.cancelAtPeriodEnd === false || attempts >= 5) {
+          break;
+        }
+      }
+
+      attempts++;
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
 
     res.status(200).json({
       success: true,
@@ -109,6 +130,21 @@ stripeCustomerRouter.get("/api/customer/:customerId/cancel", async (req, res) =>
     const cancelSub = await stripe.subscriptions.update(subData.subscriptionId, {
       cancel_at_period_end: true
     });
+
+    let attempts = 0;
+    while (true) {
+      const updatedSubData = await kv.get(`stripe:customer:${stripeCustomerId}`);
+      if (updatedSubData) {
+        const parsedData = JSON.parse(updatedSubData);
+        
+        if (parsedData.cancelAtPeriodEnd === true || attempts >= 5) {
+          break;
+        }
+      }
+
+      attempts++;
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
 
 
     res.status(200).json({
