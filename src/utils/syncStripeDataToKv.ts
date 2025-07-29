@@ -45,10 +45,12 @@ export async function syncStripeDataToKV(customerId: string) {
         expYear: customer.invoice_settings?.default_payment_method?.card?.exp_year ?? null,
       };
     }
-  } if (typeof subscription.default_payment_method === "string") {
+  } 
+  
+  if (typeof subscription.default_payment_method === "string") {
     const pm = await stripe.paymentMethods.retrieve(subscription.default_payment_method);
     paymentMethodData = {
-      paypal: customer.invoice_settings?.default_payment_method?.paypal?.payer_email ?? null,
+      paypal: pm?.paypal?.payer_email ?? null,
       brand: pm.card?.brand ?? null,
       last4: pm.card?.last4 ?? null,
       expMonth: pm.card?.exp_month ?? null,
@@ -56,7 +58,7 @@ export async function syncStripeDataToKV(customerId: string) {
     };
   } else if (subscription.default_payment_method) {
     paymentMethodData = {
-      paypal: customer.invoice_settings?.default_payment_method?.paypal?.payer_email ?? null,
+      paypal: subscription.default_payment_method?.paypal?.payer_email ?? null,
       brand: subscription.default_payment_method.card?.brand ?? null,
       last4: subscription.default_payment_method.card?.last4 ?? null,
       expMonth: subscription.default_payment_method.card?.exp_month ?? null,
