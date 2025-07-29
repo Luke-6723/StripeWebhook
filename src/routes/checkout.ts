@@ -22,7 +22,7 @@ router.use(async (req: CustomRequest, res, next) => {
 
 checkoutRouter.post("/api/checkout", async (req: CustomRequest, res) => {
   const { 
-    email, 
+    email,
     lineItems, 
     userId,
     cancelRedirect,
@@ -32,10 +32,16 @@ checkoutRouter.post("/api/checkout", async (req: CustomRequest, res) => {
     customText
   } = req.body;
 
+  let paymentMethodTypes = req.body.paymentMethodTypes as string[];
+
   if (!successRedirect || !cancelRedirect) {
     res.status(400).json({ error: "successRedirect and cancelRedirect is required" });
     return;
-  } 
+  }
+  
+  if (!paymentMethodTypes) {
+    paymentMethodTypes = ["card"];
+  }
 
   if (!email) {
     res.status(400).json({ error: "Email is required" });
@@ -99,7 +105,7 @@ checkoutRouter.post("/api/checkout", async (req: CustomRequest, res) => {
 
   try {
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
+      payment_method_types: paymentMethodTypes as Stripe.Checkout.SessionCreateParams.PaymentMethodType[],
       mode: "subscription",
       customer: req.customer?.id,
       line_items: req.stripeLineItems,
