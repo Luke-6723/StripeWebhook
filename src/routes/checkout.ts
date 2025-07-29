@@ -98,8 +98,6 @@ checkoutRouter.post("/api/checkout", async (req: CustomRequest, res) => {
   }
 
   try {
-    console.log(consentCollection, customText, allowCoupon);
-
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "subscription",
