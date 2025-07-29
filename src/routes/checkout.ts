@@ -26,7 +26,10 @@ checkoutRouter.post("/api/checkout", async (req: CustomRequest, res) => {
     lineItems, 
     userId,
     cancelRedirect,
-    successRedirect
+    successRedirect,
+    allowCoupon,
+    consentCollection,
+    customText
   } = req.body;
 
   if (!successRedirect || !cancelRedirect) {
@@ -102,6 +105,9 @@ checkoutRouter.post("/api/checkout", async (req: CustomRequest, res) => {
       line_items: req.stripeLineItems,
       success_url: `${successRedirect}`,
       cancel_url: cancelRedirect,
+      allow_promotion_codes: allowCoupon || false,
+      consent_collection: consentCollection || null,
+      custom_text: customText || null
     });
 
     res.json({ id: session.id, url: session.url });
